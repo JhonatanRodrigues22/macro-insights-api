@@ -1,9 +1,11 @@
 """Macro Insights API – ponto de entrada da aplicação FastAPI."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from app.api.routes_series import router as series_router
 from app.core.config import settings
@@ -41,6 +43,14 @@ app.add_middleware(
 )
 
 app.include_router(series_router)
+
+STATIC_INDEX = Path(__file__).parent / "static" / "index.html"
+
+
+@app.get("/app", tags=["Web"])
+def web_app():
+    """Página web simples para usar a API via navegador."""
+    return FileResponse(STATIC_INDEX)
 
 
 @app.get("/", tags=["Health"])
