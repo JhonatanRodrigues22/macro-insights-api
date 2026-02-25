@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Macro Insights - Mini Interface</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: #f4f6f8;
+        color: #111;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: 1.8rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      label {
+        display: block;
+        font-size: 0.9rem;
+        margin: 8px 0 4px;
+      }
+
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+
+      button {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #2563eb;
+        color: white;
+        font-weight: 600;
+      }
+
+      button.secondary {
+        background: #475569;
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #0b1020;
+        color: #f3f6ff;
+        padding: 12px;
+        border-radius: 8px;
+        min-height: 120px;
+        max-height: 460px;
+        overflow: auto;
+      }
+
+      .hint {
+        font-size: 0.85rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Macro Insights API · Mini Interface</h1>
+      <p class="hint">
+        Use os códigos 432 (SELIC) e 1 (Dólar venda) para começar rápido.
+      </p>
+
+      <section class="card" style="margin-bottom: 16px">
+        <h2>Configuração da API</h2>
+        <label for="api-base-url">API Base URL</label>
+        <input id="api-base-url" type="text" placeholder="http://127.0.0.1:8000" />
+        <p class="hint">
+          Se abrir esta página fora da API (ex.: Live Server), informe aqui o endereço da API.
+        </p>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h2>1) Sincronizar série</h2>
+          <label for="sync-codigo">Código da série</label>
+          <input id="sync-codigo" type="number" value="432" list="catalogo-series" />
+
+          <label for="sync-data-inicial">Data inicial (opcional)</label>
+          <input id="sync-data-inicial" type="date" value="2024-01-01" />
+
+          <label for="sync-data-final">Data final (opcional)</label>
+          <input id="sync-data-final" type="date" />
+
+          <button id="btn-sync">Sincronizar</button>
+        </section>
+
+        <section class="card">
+          <h2>2) Listar séries</h2>
+          <p class="hint">Exibe todas as séries já sincronizadas no banco local.</p>
+          <button class="secondary" id="btn-listar">Carregar séries</button>
+        </section>
+
+        <section class="card">
+          <h2>3) Consultar insights</h2>
+          <label for="insight-codigo">Código da série</label>
+          <input id="insight-codigo" type="number" value="432" list="catalogo-series" />
+
+          <label for="insight-ultimas">Últimas observações (N)</label>
+          <input id="insight-ultimas" type="number" value="10" min="1" max="100" />
+
+          <button id="btn-insights">Buscar insights</button>
+        </section>
+      </div>
+
+      <section class="card" style="margin-top: 16px">
+        <h2>Resposta</h2>
+        <pre id="output">Pronto para usar.</pre>
+      </section>
+    </div>
+
+    <datalist id="catalogo-series"></datalist>
+
+    <script>
+      const output = document.getElementById("output");
+      const catalogoSeriesEl = document.getElementById("catalogo-series");
+
+      function print(data) {
+        output.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+      }
+
+      function clean(obj) {
+        return Object.fromEntries(
+          Object.entries(obj).filter(([, value]) => value !== null && value !== "")
+        );
+      }
+
+      function getApiBaseUrl() {
+        const input = document.getElementById("api-base-url");
+        const value = (input.value || "").trim();
+        const normalized = value.replace(/\/$/, "");
+
+        if (normalized) {
+          return normalized;
+        }
+
+        if (window.location.origin === "null" || window.location.protocol === "file:") {
+          return "http://127.0.0.1:8000";
+        }
+
+        return window.location.origin;
+      }
+
+      function buildUrl(path) {
+        return `${getApiBaseUrl()}${path}`;
+      }
+
+      async function request(path, options = {}) {
+        try {
+          const response = await fetch(buildUrl(path), {
+            headers: { "Content-Type": "application/json" },
+            ...options,
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data.detail || `Erro HTTP ${response.status}`);
+          }
+
+          return data;
+        } catch (error) {
+          throw new Error(error.message || "Erro inesperado");
+        }
+      }
+
+      document.getElementById("btn-sync").addEventListener("click", async () => {
+        const codigo = Number(document.getElementById("sync-codigo").value);
+        const dataInicial = document.getElementById("sync-data-inicial").value;
+        const dataFinal = document.getElementById("sync-data-final").value;
+
+        if (!codigo) {
+          print("Informe um código válido.");
+          return;
+        }
+
+        print("Sincronizando...");
+
+        try {
+          const body = clean({
+            data_inicial: dataInicial || null,
+            data_final: dataFinal || null,
+          });
+
+          const data = await request(`/series/${codigo}/sync`, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+
+          print(data);
+        } catch (error) {
+          print(error.message);
+        }
+      });
+
+      document.getElementById("btn-listar").addEventListener("click", async () => {
+        print("Carregando séries...");
+
+        try {
+          const data = await request("/series");
+          print(data);
+        } catch (error) {
+          print(error.message);
+        }
+      });
+
+      document.getElementById("btn-insights").addEventListener("click", async () => {
+        const codigo = Number(document.getElementById("insight-codigo").value);
+        const ultimas = Number(document.getElementById("insight-ultimas").value || 10);
+
+        if (!codigo) {
+          print("Informe um código válido.");
+          return;
+        }
+
+        print("Buscando insights...");
+
+        try {
+          const data = await request(`/series/${codigo}/insights?ultimas_n=${ultimas}`);
+          print(data);
+        } catch (error) {
+          print(error.message);
+        }
+      });
+
+      async function carregarCatalogoSeries() {
+        try {
+          const catalogo = await request("/series/catalogo");
+          catalogoSeriesEl.innerHTML = "";
+          for (const item of catalogo) {
+            const option = document.createElement("option");
+            option.value = String(item.codigo);
+            option.label = `${item.codigo} - ${item.nome}`;
+            catalogoSeriesEl.appendChild(option);
+          }
+        } catch (error) {
+          print(`Aviso: não foi possível carregar catálogo de séries (${error.message}).`);
+        }
+      }
+
+      (function setupDefaultApiBaseUrl() {
+        const input = document.getElementById("api-base-url");
+
+        if (window.location.origin === "null" || window.location.protocol === "file:") {
+          input.value = "http://127.0.0.1:8000";
+          return;
+        }
+
+        input.value = window.location.origin;
+      })();
+
+      carregarCatalogoSeries();
+    </script>
+  </body>
+</html>

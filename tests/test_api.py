@@ -23,6 +23,18 @@ class TestListarSeries:
         assert resp.json() == []
 
 
+class TestCatalogoSeries:
+    """Testa GET /series/catalogo."""
+
+    def test_catalogo_retorna_20_series(self, client):
+        resp = client.get("/series/catalogo")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert isinstance(data, list)
+        assert len(data) == 20
+        assert data[0]["codigo"] == 432
+
+
 class TestObterSerie:
     """Testa GET /series/{codigo}."""
 

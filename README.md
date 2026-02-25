@@ -13,18 +13,37 @@ API que coleta séries econômicas do Banco Central do Brasil (SGS/BCData), arma
 
 [Banco Central do Brasil – Dados Abertos (SGS/BCData)](https://dadosabertos.bcb.gov.br/)
 
-Séries disponíveis no MVP:
+Séries disponíveis no catálogo inicial (20):
 
 | Código | Série |
 |--------|-------|
 | 432 | SELIC (meta) – % a.a. |
 | 1 | Dólar comercial (venda) |
+| 10813 | Dólar comercial (compra) |
+| 433 | IPCA – variação mensal |
+| 4389 | CDI – % a.d. |
+| 11 | SELIC diária |
+| 4380 | PIB mensal – valores correntes |
+| 25433 | IPCA-15 – variação mensal |
+| 1178 | Série SGS #1178 |
+| 226 | Série SGS #226 |
+| 188 | Série SGS #188 |
+| 189 | Série SGS #189 |
+| 190 | Série SGS #190 |
+| 4390 | Série SGS #4390 |
+| 21619 | Série SGS #21619 |
+| 21620 | Série SGS #21620 |
+| 24363 | Série SGS #24363 |
+| 24364 | Série SGS #24364 |
+| 22707 | Série SGS #22707 |
+| 22708 | Série SGS #22708 |
 
 ## Endpoints
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | `GET` | `/` | Health-check |
+| `GET` | `/series/catalogo` | Retorna catálogo inicial com 20 séries sugeridas |
 | `POST` | `/series/{codigo}/sync` | Baixa dados do BCB e salva no banco |
 | `GET` | `/series` | Lista séries já sincronizadas |
 | `GET` | `/series/{codigo}` | Dados paginados (com filtro de datas) |
@@ -53,6 +72,14 @@ uvicorn app.main:app --reload
 ```
 
 A documentação interativa estará em **http://127.0.0.1:8000/docs**
+
+Mini interface web disponível em **http://127.0.0.1:8000/app**
+
+Fluxo sugerido na interface:
+
+1. Sincronizar série (ex.: 432 ou 1)
+2. Listar séries salvas
+3. Consultar insights da série
 
 ## Rodar testes
 

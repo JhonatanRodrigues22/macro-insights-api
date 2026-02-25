@@ -12,6 +12,7 @@ from app.core.logging import logger
 from app.db.models import Observacao, Serie
 from app.db.session import get_db
 from app.schemas.series import (
+    CatalogoSerieOut,
     InsightsResponse,
     ObservacaoOut,
     SerieDetalhe,
@@ -19,10 +20,16 @@ from app.schemas.series import (
     SyncRequest,
     SyncResponse,
 )
-from app.services.bcb_client import buscar_serie, nome_serie
+from app.services.bcb_client import buscar_serie, listar_catalogo_series, nome_serie
 from app.services.insights import calcular_insights
 
 router = APIRouter(prefix="/series", tags=["Séries"])
+
+
+@router.get("/catalogo", response_model=list[CatalogoSerieOut])
+def obter_catalogo_series():
+    """Retorna catálogo inicial de 20 séries sugeridas."""
+    return listar_catalogo_series()
 
 
 # ── POST /series/{codigo}/sync ───────────────────────────────────────────────

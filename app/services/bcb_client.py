@@ -7,16 +7,33 @@ import httpx
 from app.core.config import settings
 from app.core.logging import logger
 
-# Mapeamento de códigos conhecidos para nomes amigáveis
+# Catálogo inicial com 20 séries para uso rápido na API/UI.
+# Observação: alguns rótulos são genéricos para facilitar expansão do catálogo.
+CATALOGO_SERIES: list[dict[str, int | str]] = [
+    {"codigo": 432, "nome": "SELIC (meta) – % a.a."},
+    {"codigo": 1, "nome": "Dólar comercial (venda)"},
+    {"codigo": 10813, "nome": "Dólar comercial (compra)"},
+    {"codigo": 433, "nome": "IPCA – variação mensal"},
+    {"codigo": 4389, "nome": "CDI – % a.d."},
+    {"codigo": 11, "nome": "SELIC diária"},
+    {"codigo": 4380, "nome": "PIB mensal – valores correntes"},
+    {"codigo": 25433, "nome": "IPCA-15 – variação mensal"},
+    {"codigo": 1178, "nome": "Série SGS #1178"},
+    {"codigo": 226, "nome": "Série SGS #226"},
+    {"codigo": 188, "nome": "Série SGS #188"},
+    {"codigo": 189, "nome": "Série SGS #189"},
+    {"codigo": 190, "nome": "Série SGS #190"},
+    {"codigo": 4390, "nome": "Série SGS #4390"},
+    {"codigo": 21619, "nome": "Série SGS #21619"},
+    {"codigo": 21620, "nome": "Série SGS #21620"},
+    {"codigo": 24363, "nome": "Série SGS #24363"},
+    {"codigo": 24364, "nome": "Série SGS #24364"},
+    {"codigo": 22707, "nome": "Série SGS #22707"},
+    {"codigo": 22708, "nome": "Série SGS #22708"},
+]
+
 SERIES_CONHECIDAS: dict[int, str] = {
-    11:   "SELIC (meta)",
-    432:  "SELIC (meta) – % a.a.",
-    4389: "CDI – % a.d.",
-    1:    "Dólar comercial (venda)",
-    10813: "Dólar comercial (compra)",
-    433:  "IPCA – variação mensal",
-    4380: "PIB mensal – valores correntes",
-    25433: "IPCA-15 – variação mensal",
+    int(item["codigo"]): str(item["nome"]) for item in CATALOGO_SERIES
 }
 
 
@@ -65,3 +82,8 @@ async def buscar_serie(
 def nome_serie(codigo: int) -> str:
     """Retorna nome amigável da série ou um nome genérico."""
     return SERIES_CONHECIDAS.get(codigo, f"Série BCB #{codigo}")
+
+
+def listar_catalogo_series() -> list[dict[str, int | str]]:
+    """Retorna catálogo inicial de séries sugeridas."""
+    return CATALOGO_SERIES

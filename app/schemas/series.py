@@ -54,6 +54,12 @@ class SyncResponse(BaseModel):
     mensagem: str
 
 
+class CatalogoSerieOut(BaseModel):
+    """Item do catálogo de séries sugeridas."""
+    codigo: int
+    nome: str
+
+
 class InsightsResponse(BaseModel):
     """Métricas calculadas sobre a série."""
     codigo: int
