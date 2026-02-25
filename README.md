@@ -46,12 +46,37 @@ source .venv/bin/activate
 
 # 3. Instalar dependências
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
 # 4. Rodar a API
 uvicorn app.main:app --reload
 ```
 
 A documentação interativa estará em **http://127.0.0.1:8000/docs**
+
+## Rodar testes
+
+```bash
+pytest -v
+```
+
+## Rodar com Docker
+
+```bash
+# build
+docker build -t macro-insights-api .
+
+# run
+docker run --rm -p 8000:8000 macro-insights-api
+```
+
+## Publicar no GitHub
+
+```bash
+git remote add origin https://github.com/seu-usuario/macro-insights-api.git
+git branch -M main
+git push -u origin main
+```
 
 ## Exemplo de uso
 

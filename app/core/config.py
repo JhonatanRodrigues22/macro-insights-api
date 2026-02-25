@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     # Paginação padrão
     PAGE_SIZE: int = 50
 
+    # CORS
+    CORS_ORIGINS: list[str] = ["*"]
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 
