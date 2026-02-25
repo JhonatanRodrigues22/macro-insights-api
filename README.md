@@ -53,7 +53,7 @@ Séries disponíveis no catálogo inicial (20):
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/seu-usuario/macro-insights-api.git
+git clone https://github.com/JhonatanRodrigues22/macro-insights-api.git
 cd macro-insights-api
 
 # 2. Criar e ativar ambiente virtual
