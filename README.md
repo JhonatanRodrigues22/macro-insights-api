@@ -25,18 +25,6 @@ Séries disponíveis no catálogo inicial (20):
 | 11 | SELIC diária |
 | 4380 | PIB mensal – valores correntes |
 | 25433 | IPCA-15 – variação mensal |
-| 1178 | Série SGS #1178 |
-| 226 | Série SGS #226 |
-| 188 | Série SGS #188 |
-| 189 | Série SGS #189 |
-| 190 | Série SGS #190 |
-| 4390 | Série SGS #4390 |
-| 21619 | Série SGS #21619 |
-| 21620 | Série SGS #21620 |
-| 24363 | Série SGS #24363 |
-| 24364 | Série SGS #24364 |
-| 22707 | Série SGS #22707 |
-| 22708 | Série SGS #22708 |
 
 ## Endpoints
 
