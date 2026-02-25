@@ -78,6 +78,13 @@ git branch -M main
 git push -u origin main
 ```
 
+## CI (GitHub Actions)
+
+Ao fazer push ou abrir Pull Request nas branches `main`/`master`, o workflow de CI roda automaticamente:
+
+- instalação de dependências
+- execução da suíte de testes com `pytest -v`
+
 ## Exemplo de uso
 
 ### Sincronizar SELIC (código 432)
